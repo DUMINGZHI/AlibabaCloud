@@ -1,0 +1,30 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: demo-gateway-service
+
+  zipkin:
+    base-url: http://127.0.0.1:9411/ #zipkin地址
+    discovery-client-enabled: false  #不用开启服务发现
+  sleuth:
+    sampler:
+      probability: 1.0 #采样百分比
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+    gateway:
+      routes:
+        - id: demo-order-service
+          #uri: http://127.0.0.1:9000
+          uri: lb://demo-order-service
+          predicates:
+            - Path=/order-service/**
+          filters:
+            - StripPrefix= 1
+
+      discovery:
+        locator:
+          enabled: true
